@@ -10,6 +10,9 @@ Features include:
 
 simply run `npm run build` from the directory and add the /dist file to chrome extensions via the 'load unpacked' prompt/
 
+![Alt text](./cover_letters_extension/example.png)
+
+
 ## Alterations
 ### App.jsx
 - Change the reference skills.
@@ -20,4 +23,4 @@ Just update the `SKILL_RULES` const to match the reference skills.
 
 # Standalone GUI
 A super basic GUI for creating cover letters in a similar matter. 
-As long as you have tk-linter installed it will work.
+As long as you have tk-linter installed it will work. 
