@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Cover Letter Generator",
+  "version": "1.0",
+  "description": "Generate cover letters while browsing job ads.",
+  "permissions": ["scripting", "activeTab", "clipboardWrite"],
+  "host_permissions": ["https://*.seek.com.au/*"],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.seek.com.au/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
