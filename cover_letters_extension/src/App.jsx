@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 const SKILL_SENTENCES = {
   "TypeScript": "I’ve built and maintained scalable frontend and backend systems using TypeScript that support thousands of remote users.",
-  "AWS": "I'm habe multiple years experience and am comfortable deploying and managing infrastructure on AWS, using services like Lambda, ECS, DynamoDB, and API Gateway.",
-  "React": "I've developed responsive and user-focused interfaces using React.",
-  "Node.js": "I’ve delivered strong performing backend services using Node.js.",
+  "AWS": "I have multiple years of experience and am comfortable deploying and managing infrastructure on AWS, using services like Lambda, ECS, DynamoDB, and API Gateway.",
+  "React": "I've developed multiple responsive and user-focused interfaces using React.",
+  "Node.js": "I’ve delivered strong-performing backend services using Node.js.",
   "CI/CD": "I’ve implemented dozens of CI/CD pipelines using GitHub Actions and CodePipeline.",
   "Agile": "I work well in Agile teams, contributing to sprint planning and retrospectives, having run some in the past myself."
 };
@@ -24,7 +24,7 @@ function App() {
           (res) => {
             if (res) {
               setJobTitle(res.jobTitle || "");
-              setCompanyName(res.companyName || "");
+              setCompanyName(res.companyName.replaceAll(" ", "") || "");
 
               // Pre-fill skills if any matched
               if (Array.isArray(res.matchedSkills)) {
@@ -41,7 +41,7 @@ function App() {
       });
     }
   }, []);
-  
+
   const generateLetter = () => {
     const intro = `Dear ${companyName} team,\n\nI'm writing to express my interest in the ${jobTitle} position at ${companyName}.`;
 
