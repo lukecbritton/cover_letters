@@ -24,7 +24,7 @@ function App() {
           (res) => {
             if (res) {
               setJobTitle(res.jobTitle || "");
-              setCompanyName(res.companyName.replaceAll(" ", "") || "");
+              setCompanyName(res.companyName.trim() || "");
 
               // Pre-fill skills if any matched
               if (Array.isArray(res.matchedSkills)) {
