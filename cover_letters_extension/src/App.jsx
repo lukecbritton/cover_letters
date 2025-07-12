@@ -14,35 +14,50 @@ function App() {
   const [companyName, setCompanyName] = useState("");
   const [skills, setSkills] = useState(["", "", ""]);
   const [letter, setLetter] = useState("");
+  const name = "Luke Britton"
 
   useEffect(() => {
+    // Restore generated letter from storage
+    chrome.storage.local.get("generatedLetter", (result) => {
+      if (result.generatedLetter) {
+        setLetter(result.generatedLetter);
+      }
+    });
+
+    // Try to get job info from the content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        { action: "getJobInfo" },
-        (res) => {
-          if (res) {
-            setJobTitle(res.jobTitle || "");
-            setCompanyName(res.companyName || "");
-            const top3 = res.matchedSkills?.slice(0, 3) || [];
-            setSkills([top3[0] || "", top3[1] || "", top3[2] || ""]);
-          }
+      if (!tabs.length) return;
+      const activeTabId = tabs[0].id;
+
+      chrome.tabs.sendMessage(activeTabId, { action: "getJobInfo" }, (res) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Content script not responding:", chrome.runtime.lastError.message);
+          return;
         }
-      );
+        if (!res) return;
+
+        setJobTitle(res.jobTitle || "");
+        setCompanyName(res.companyName || "");
+        const top3 = res.matchedSkills?.slice(0, 3) || [];
+        setSkills([top3[0] || "", top3[1] || "", top3[2] || ""]);
+      });
     });
   }, []);
 
   const generateLetter = () => {
-    const intro = `Dear ${companyName} team,\n\nI'm writing to express my interest in the ${jobTitle} position at ${companyName}.`;
+  const intro = `Dear ${companyName} team,\n\nI'm writing to express my interest in the ${jobTitle} position at ${companyName}.`;
 
-    const body = skills
-      .filter(Boolean)
-      .map(skill => `- ${SKILL_SENTENCES[skill]}`)
-      .join("\n");
+  const body = skills
+    .filter(Boolean)
+    .map(skill => `- ${SKILL_SENTENCES[skill]}`)
+    .join("\n");
 
-    const outro = "\n\nI’m excited about the opportunity and would love to chat further.\n\nBest regards,\nLuke Britton";
+  const outro = `\n\nI’m excited about the opportunity and would love to chat further.\n\nBest regards,\n${name}`;
 
-    setLetter(`${intro}\n\nI believe I would be a great fit for the role based on the following experience:\n${body}${outro}`);
+  const fullLetter = `${intro}\n\nI believe I would be a great fit for the role based on the following experience:\n${body}${outro}`;
+  setLetter(fullLetter);
+
+  chrome.storage.local.set({ generatedLetter: fullLetter });
   };
 
   const copyToClipboard = () => {
@@ -79,6 +94,12 @@ function App() {
       <textarea value={letter} readOnly rows={10} style={{ width: "100%", whiteSpace: "pre-wrap" }} />
 
       <button onClick={copyToClipboard}>Copy to Clipboard</button>
+      <button onClick={() => {
+        chrome.storage.local.remove("generatedLetter", () => {
+          setLetter("");
+        });
+      }}>Clear Letter</button>
+
     </div>
   );
 }
